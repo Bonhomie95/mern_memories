@@ -9,9 +9,12 @@ import {
 import { ThumbUpAlt, Delete, MoreHoriz, ThumbDown } from '@material-ui/icons';
 import moment from 'moment';
 import useStyles from './style';
+import { useDispatch } from 'react-redux';
+import { deletePost } from '../../../actions/posts';
 
-const Post = ({ post }) => {
+const Post = ({ post, setCurrentId }) => {
   const classes = useStyles();
+  const dispatch = useDispatch();
 
   return (
     <Card className={classes.card}>
@@ -28,8 +31,14 @@ const Post = ({ post }) => {
         </Typography>
       </div>
       <div className={classes.overlay2}>
-        <Button style={{ color: 'white' }} siz="small" onClick={() => {}}>
-          <MoreHoriz fontSize="default" />
+        <Button
+          style={{ color: 'white' }}
+          siz="small"
+          onClick={() => {
+            setCurrentId(post._id);
+          }}
+        >
+          <MoreHoriz fontSize="medium" />
         </Button>
       </div>
       <div className={classes.details}>
@@ -44,14 +53,20 @@ const Post = ({ post }) => {
         </Typography>
       </CardContent>
       <CardActions className={classes.cardActions}>
-        <Button color='primary' size='small' onClick={()=>{}}>
-          <ThumbUpAlt fontSize='small' /> Like {post.likeCount}
+        <Button color="primary" size="small" onClick={() => {}}>
+          <ThumbUpAlt fontSize="small" /> Like {post.likeCount}
         </Button>
-        <Button color='primary' size='small' onClick={()=>{}}>
-          <Delete fontSize='small' /> Delete
+        <Button
+          color="primary"
+          size="small"
+          onClick={() => {
+            dispatch(deletePost(post._id));
+          }}
+        >
+          <Delete fontSize="small" /> Delete
         </Button>
-        <Button color='secondary' size='small' onClick={()=>{}}>
-          <ThumbDown fontSize='small' />
+        <Button color="secondary" size="small" onClick={() => {}}>
+          <ThumbDown fontSize="small" />
         </Button>
       </CardActions>
     </Card>
