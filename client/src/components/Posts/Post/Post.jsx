@@ -10,7 +10,7 @@ import { ThumbUpAlt, Delete, MoreHoriz, ThumbDown } from '@material-ui/icons';
 import moment from 'moment';
 import useStyles from './style';
 import { useDispatch } from 'react-redux';
-import { deletePost } from '../../../actions/posts';
+import { deletePost, likePost } from '../../../actions/posts';
 
 const Post = ({ post, setCurrentId }) => {
   const classes = useStyles();
@@ -46,15 +46,24 @@ const Post = ({ post, setCurrentId }) => {
           {post.tags.map((tag) => `#${tag} `)}
         </Typography>
       </div>
+      <Typography className={classes.title} variant="h5" gutterBottom>
+        {post.title}{' '}
+      </Typography>
       <CardContent>
-        <Typography className={classes.title} variant="h5" gutterBottom>
+        <Typography variant="body2" color="textSecondary" component="p">
           {' '}
           {post.message}{' '}
         </Typography>
       </CardContent>
       <CardActions className={classes.cardActions}>
-        <Button color="primary" size="small" onClick={() => {}}>
-          <ThumbUpAlt fontSize="small" /> Like {post.likeCount}
+        <Button
+          color="primary"
+          size="small"
+          onClick={() => {
+            dispatch(likePost(post._id));
+          }}
+        >
+          <ThumbUpAlt fontSize="small" />&nbsp;Like &nbsp;{post.likeCount}
         </Button>
         <Button
           color="primary"
