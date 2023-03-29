@@ -1,61 +1,70 @@
-import { useState, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
-import { AppBar, Avatar, Button, Toolbar, Typography } from '@material-ui/core';
+import React, { useState, useEffect } from 'react';
+import { AppBar, Typography, Toolbar, Avatar, Button } from '@material-ui/core';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import decode from 'jwt-decode';
+
+import memoriesLogo from '../../images/memories.png';
+import memoriesText from '../../images/memoriesText.png';
+import * as actionType from '../../constants/actionTypes';
 import useStyles from './style';
 
-import memories from '../../images/memories.png';
-
 const Navbar = () => {
-  const classes = useStyles();
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const location = useLocation();
   const [user, setUser] = useState(JSON.parse(localStorage.getItem('profile')));
+  const dispatch = useDispatch();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const classes = useStyles();
 
+  const logout = () => {
+    dispatch({ type: actionType.LOGOUT });
+
+    navigate('/auth');
+
+    setUser(null);
+  };
 
   useEffect(() => {
     const token = user?.token;
+
+    if (token) {
+      const decodedToken = decode(token);
+
+      if (decodedToken.exp * 1000 < new Date().getTime()) logout();
+    }
+
     setUser(JSON.parse(localStorage.getItem('profile')));
   }, [location]);
 
-  const logout = () => {
-    dispatch({ type: 'LOGOUT' });
-    navigate('/');
-    setUser(null);
-  };
   return (
     <AppBar className={classes.appBar} position="static" color="inherit">
-      <div className={classes.brandContainer}>
-        <Typography
+      <Link to="/" className={classes.brandContainer}>
+        <img
           component={Link}
           to="/"
-          className={classes.heading}
-          variant="h2"
-          align="center"
-        >
-          Memories
-        </Typography>
+          src={memoriesText}
+          alt="icon"
+          height="45px"
+        />
         <img
           className={classes.image}
-          src={memories}
-          alt="memories"
-          height="60"
+          src={memoriesLogo}
+          alt="icon"
+          height="40px"
         />
-      </div>
+      </Link>
       <Toolbar className={classes.toolbar}>
-        {user ? (
+        {user?.result ? (
           <div className={classes.profile}>
-            {/* <Avatar
+            <Avatar
               className={classes.purple}
-              alt={user.result.name}
-              src={user.result.image_url}
+              alt={user?.result.name}
+              src={user?.result.imageUrl}
             >
-              {user.result.name.charAt(0)}
-            </Avatar> */}
+              {user?.result.name.charAt(0).toUpperCase()}
+            </Avatar>
             <Typography className={classes.userName} variant="h6">
-              {' '}
-              {user.result.name}{' '}
+              {user?.result.name}
             </Typography>
             <Button
               variant="contained"
@@ -63,8 +72,7 @@ const Navbar = () => {
               color="secondary"
               onClick={logout}
             >
-              {' '}
-              Logout{' '}
+              Logout
             </Button>
           </div>
         ) : (
@@ -74,7 +82,7 @@ const Navbar = () => {
             variant="contained"
             color="primary"
           >
-            Login
+            Sign In
           </Button>
         )}
       </Toolbar>
